@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Tuesday class reminders | KoreanLearnin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --pink:#ff8fb8; --pink-soft:#ffe6f1; --coral:#ff7a9c;
+  --lav:#b9a6f2; --lav-soft:#efeaff;
+  --mint:#7fd8b6; --mint-soft:#e0f8ef;
+  --butter:#ffd772; --butter-soft:#fff5da;
+  --sky:#86c7f5; --sky-soft:#e4f3ff;
+  --ink:#4a2a5c; --ink-soft:#5e3f75;
+  --rose-deep:#e8526f;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family:'Nunito',-apple-system,BlinkMacSystemFont,sans-serif;
+  color:var(--ink); -webkit-text-size-adjust:100%; min-height:100dvh;
+  background:
+    radial-gradient(circle at 12% 6%, rgba(255,143,184,.20), transparent 42%),
+    radial-gradient(circle at 88% 20%, rgba(134,199,245,.22), transparent 44%),
+    radial-gradient(circle at 50% 94%, rgba(127,216,182,.20), transparent 48%),
+    linear-gradient(180deg,#fff3f9 0%,#f2f5ff 48%,#f0fbf6 100%);
+  background-attachment:fixed;
+}
+.wrap { width:100%; max-width:560px; margin:0 auto; padding:24px 14px 16px; }
+.hero { max-width:500px; margin:0 auto; text-align:center; padding:6px 4px 2px; }
+.logo { width:104px; max-width:38%; display:block; margin:0 auto 8px; }
+h1 { font-family:'Fredoka',sans-serif; font-weight:700; font-size:clamp(25px,6.6vw,33px); line-height:1.16; letter-spacing:-.3px; max-width:23ch; margin:0 auto; text-wrap:balance; }
+.hl { background:linear-gradient(180deg,transparent 70%,rgba(255,215,114,.9) 70%); padding:0 3px; border-radius:3px; }
+.sub { font-size:clamp(14.5px,3.8vw,17px); font-weight:600; color:var(--ink-soft); max-width:44ch; margin:9px auto 0; line-height:1.4; }
+.hero-divider { display:flex; align-items:center; justify-content:center; gap:8px; width:min(250px,68%); margin:15px auto 5px; }
+.hero-divider::before, .hero-divider::after { content:''; height:2px; flex:1; border-radius:2px; background:linear-gradient(90deg,transparent,var(--lav)); }
+.hero-divider::after { background:linear-gradient(90deg,var(--lav),transparent); }
+.hero-divider span { width:8px; height:8px; flex:0 0 8px; border-radius:50%; background:var(--pink); }
+.hero-divider span:nth-child(2) { background:var(--lav); }
+.hero-divider span:nth-child(3) { background:var(--mint); }
+
+.panel { background:#fff; border-radius:22px; padding:18px 16px 22px; margin-top:20px;
+  border:3px solid var(--accent, var(--lav)); border-top-width:12px;
+  box-shadow:0 8px 0 rgba(74,42,92,.10), 0 16px 32px rgba(74,42,92,.10); }
+
+.field { max-width:460px; margin:0 auto 16px; }
+.field label { display:block; font-family:'Fredoka',sans-serif; font-weight:600; font-size:15px; color:var(--ink); margin:0 2px 7px; line-height:1.3; }
+.field .inp { width:100%; padding:12px 14px; border:2px solid var(--lav-soft); border-radius:14px; font-family:'Nunito',sans-serif; font-size:16px; font-weight:700; color:var(--ink); background-color:#fff; outline:none; transition:border-color .2s ease,box-shadow .2s ease; -webkit-appearance:none; appearance:none; }
+.field .inp::placeholder { color:#b3a3c4; font-weight:600; }
+.field .inp:focus { border-color:var(--lav); box-shadow:0 0 0 4px var(--lav-soft); }
+.field.bad .inp { border-color:var(--rose-deep); }
+.field .ferr { display:none; color:var(--rose-deep); font-size:12px; font-weight:700; margin-top:5px; }
+.field.bad .ferr { display:block; }
+.phone-row { display:flex; align-items:stretch; }
+.dial { display:flex; align-items:center; justify-content:center; min-width:62px; flex-shrink:0; padding:0 10px; margin-right:7px; border:2px solid var(--lav); border-radius:14px; background:var(--lav-soft); color:var(--ink); font-family:'Fredoka',sans-serif; font-size:16px; font-weight:600; text-align:center; white-space:nowrap; }
+.phone-row .inp { flex:1 1 auto; min-width:0; }
+.fhint { margin:6px 2px 0; font-size:12.5px; font-weight:700; color:var(--ink-soft); }
+.hp { position:absolute; left:-9999px; top:-9999px; width:1px; height:1px; overflow:hidden; }
+
+.btnrow { display:flex; gap:10px; margin-top:6px; }
+.btn { font-family:'Fredoka',sans-serif; font-weight:700; font-size:15px; border:0; border-radius:999px; cursor:pointer; padding:13px 20px; color:#fff; flex:1; text-align:center; transition:transform .16s cubic-bezier(.34,1.8,.5,1); }
+.btn:active { transform:translateY(2px) scale(.96); }
+.btn-main { background:linear-gradient(180deg,#ff9fc3,var(--coral)); box-shadow:0 4px 0 #d15c7d; }
+#submitBtn { flex:0 1 230px; margin-left:auto; margin-right:auto; animation:registerPulse 1.6s ease-in-out infinite; }
+#submitBtn:hover, #submitBtn:active, #submitBtn[disabled] { animation:none; }
+@keyframes registerPulse { 0%,100% { transform:scale(1); box-shadow:0 4px 0 #d15c7d,0 0 0 0 rgba(255,122,156,.55); } 50% { transform:scale(1.06); box-shadow:0 4px 0 #d15c7d,0 0 0 11px rgba(255,122,156,0); } }
+.btn-main[disabled] { opacity:.5; cursor:not-allowed; }
+
+.endwrap { text-align:center; padding:6px 4px 2px; }
+.endwrap .big { font-size:40px; margin-bottom:8px; }
+.endwrap h2 { font-family:'Fredoka',sans-serif; font-size:clamp(19px,5.6vw,23px); margin-bottom:8px; }
+.endwrap p { font-size:13.5px; font-weight:600; color:var(--ink-soft); max-width:32ch; margin:0 auto; line-height:1.55; }
+
+.send-err { display:none; color:var(--rose-deep); font-size:12.5px; font-weight:700; text-align:center; margin-top:10px; }
+.send-err.on { display:block; }
+
+footer { text-align:center; padding:12px 12px 18px; }
+footer p { font-family:'Fredoka',sans-serif; font-weight:600; font-size:14px; color:var(--ink-soft); }
+
+@media (prefers-reduced-motion:reduce) { * { transition:none !important; } #submitBtn { animation:none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <img class="logo" src="https://cdn.shopify.com/s/files/1/0674/6747/7282/files/logo555.png?v=1757969221" alt="KoreanLearnin">
+    <h1>Sign up for <span class="hl">Tuesday class</span> reminders</h1>
+    <p class="sub">We'll text you every Tuesday, 8 PM Eastern (NY), when reading class is about to start!</p>
+    <div class="hero-divider" aria-hidden="true"><span></span><span></span><span></span></div>
+  </header>
+
+  <form id="remForm" novalidate>
+    <!-- Bot trap. The name must NOT look like a real field ("company", "website"...): browser autofill fills those. -->
+    <input type="text" id="hpField" name="kl_leave_blank_x7" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+    <section class="panel" style="--accent:var(--mint)">
+      <div class="field" id="f-name">
+        <label for="name">Name</label>
+        <input class="inp" id="name" type="text" maxlength="40" autocomplete="given-name" autocapitalize="words" placeholder="Your name" required>
+        <p class="ferr">Please write your name. This can't be left blank.</p>
+      </div>
+      <div class="field" id="f-phone">
+        <label for="phone">Mobile number</label>
+        <div class="phone-row"><span class="dial" aria-hidden="true">+1</span><input class="inp" id="phone" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="11" autocomplete="tel-national" placeholder="Mobile number" required></div>
+        <p class="fhint">U.S. and Canada numbers only.</p>
+        <p class="ferr">Please enter a valid U.S. or Canada mobile number.</p>
+      </div>
+      <div class="btnrow"><button type="submit" class="btn btn-main" id="submitBtn">Sign me up</button></div>
+      <p class="send-err" id="sendErr">We couldn't send that. Please check your connection and try again.</p>
+    </section>
+  </form>
+
+  <section class="panel" id="endDone" style="--accent:var(--mint); display:none;">
+    <div class="endwrap">
+      <div class="big">🎉</div>
+      <h2>You're all set!</h2>
+      <p>We'll text you every Tuesday when reading class is about to start. See you there!</p>
+    </div>
+  </section>
+</div>
+
+<footer>
+  <p>&copy; 2026 KoreanLearnin. All rights reserved.</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/libphonenumber-js@1.13.14/bundle/libphonenumber-max.js"></script>
+<script>
+(function () {
+  // Make scenario 4979634 saves the signup to Firestore tuesday_reminders/<phone digits>.
+  // Same number again just refreshes the name, so nobody is ever texted twice.
+  var SUBMIT_URL = 'https://hook.us1.make.com/4i9zxvklketlrwsdnaccmow8fpg4qdfv';
+  var PAGE_LOAD_MS = Date.now();
+  var $ = function (id) { return document.getElementById(id); };
+  var MSG_NAME_BLANK = "Please write your name. This can't be left blank.";
+  var MSG_PHONE_BLANK = "Please write your mobile number. This can't be left blank.";
+  var MSG_PHONE_BAD = 'Please enter a valid U.S. or Canada mobile number.';
+
+  function setErr(fieldId, msg) {
+    var f = $(fieldId), p = f.querySelector('.ferr');
+    if (msg) { if (p) p.textContent = msg; f.classList.add('bad'); } else f.classList.remove('bad');
+  }
+  function clean(s) { return String(s == null ? '' : s).replace(/["\\<>]/g, '').replace(/[\r\n\t]+/g, ' ').replace(/\s{2,}/g, ' ').trim(); }
+
+  // U.S./Canada mobile numbers only (+1). Returns the number as +1XXXXXXXXXX, or an error message.
+  function checkPhone() {
+    var digits = ($('phone').value || '').replace(/[^0-9]/g, '');
+    if (!digits) return { ok: false, msg: MSG_PHONE_BLANK };
+    if (digits.length === 11 && digits.charAt(0) === '1') digits = digits.slice(1);
+    if (digits.length !== 10) return { ok: false, msg: MSG_PHONE_BAD };
+    var L = window.libphonenumber, parsed = null;
+    if (L) {
+      try { parsed = L.parsePhoneNumberFromString('+1' + digits); } catch (e) { parsed = null; }
+      if (!parsed || !parsed.isValid()) return { ok: false, msg: MSG_PHONE_BAD };
+      var type = parsed.getType();
+      if (type && type !== 'MOBILE' && type !== 'FIXED_LINE_OR_MOBILE') return { ok: false, msg: MSG_PHONE_BAD };
+    }
+    return { ok: true, e164: '+1' + digits };
+  }
+
+  $('name').addEventListener('input', function () { setErr('f-name', ''); $('sendErr').classList.remove('on'); });
+  $('phone').addEventListener('input', function () { this.value = this.value.replace(/[^0-9]/g, ''); setErr('f-phone', ''); $('sendErr').classList.remove('on'); });
+  $('name').addEventListener('blur', function () { if (!clean($('name').value)) setErr('f-name', MSG_NAME_BLANK); });
+  $('phone').addEventListener('blur', function () { if (!$('phone').value) return; var pr = checkPhone(); if (!pr.ok) setErr('f-phone', pr.msg); });
+
+  var sending = false;
+  $('remForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (sending) return;
+    var name = clean($('name').value);
+    var pr = checkPhone();
+    setErr('f-name', name ? '' : MSG_NAME_BLANK);
+    setErr('f-phone', pr.ok ? '' : pr.msg);
+    if (!name || !pr.ok) {
+      var firstBad = document.querySelector('.field.bad');
+      if (firstBad) firstBad.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    // Looks like a bot? Still saved, but flagged: flagged numbers get no texts until staff clear them in Class Manager.
+    var suspect = $('hpField').value ? 'trap' : ((Date.now() - PAGE_LOAD_MS) < 800 ? 'fast' : '');
+
+    sending = true;
+    var btn = $('submitBtn');
+    btn.disabled = true; btn.textContent = 'Sending...';
+    $('sendErr').classList.remove('on');
+    fetch(SUBMIT_URL, { method: 'POST', body: new URLSearchParams({ name: name, phone: pr.e164, suspect: suspect }) })
+      .then(function (res) { return res.json().catch(function () { return {}; }).then(function (out) { if (!res.ok || out.result !== 'ok') throw new Error('send failed'); }); })
+      .then(function () {
+        $('remForm').style.display = 'none';
+        $('endDone').style.display = '';
+        $('endDone').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      })
+      .catch(function () {
+        sending = false;
+        btn.disabled = false; btn.textContent = 'Sign me up';
+        $('sendErr').classList.add('on');
+      });
+  });
+})();
+</script>
+</body>
+</html>
