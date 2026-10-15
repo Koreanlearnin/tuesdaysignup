@@ -92,7 +92,6 @@ footer p { font-family:'Fredoka',sans-serif; font-weight:600; font-size:14px; co
   </header>
 
   <form id="remForm" novalidate>
-    <!-- Bot trap. The name must NOT look like a real field ("company", "website"...): browser autofill fills those. -->
     <input type="text" id="hpField" name="kl_leave_blank_x7" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
 
     <section class="panel" style="--accent:var(--mint)">
@@ -103,7 +102,7 @@ footer p { font-family:'Fredoka',sans-serif; font-weight:600; font-size:14px; co
       </div>
       <div class="field" id="f-phone">
         <label for="phone">Mobile number</label>
-        <div class="phone-row"><span class="dial" aria-hidden="true">+1</span><input class="inp" id="phone" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="11" autocomplete="tel-national" placeholder="Mobile number" required></div>
+        <div class="phone-row"><span class="dial" aria-hidden="true">+1</span><input class="inp" id="phone" type="tel" inputmode="numeric" pattern="[0-9]*" autocomplete="tel-national" placeholder="Mobile number" required></div>
         <p class="fhint">U.S. and Canada numbers only.</p>
         <p class="ferr">Please enter a valid U.S. or Canada mobile number.</p>
       </div>
@@ -128,14 +127,13 @@ footer p { font-family:'Fredoka',sans-serif; font-weight:600; font-size:14px; co
 <script src="https://cdn.jsdelivr.net/npm/libphonenumber-js@1.13.14/bundle/libphonenumber-max.js"></script>
 <script>
 (function () {
-  // Make scenario 4979634 saves the signup to Firestore tuesday_reminders/<phone digits>.
-  // Same number again just refreshes the name, so nobody is ever texted twice.
   var SUBMIT_URL = 'https://hook.us1.make.com/4i9zxvklketlrwsdnaccmow8fpg4qdfv';
   var PAGE_LOAD_MS = Date.now();
   var $ = function (id) { return document.getElementById(id); };
   var MSG_NAME_BLANK = "Please write your name. This can't be left blank.";
   var MSG_PHONE_BLANK = "Please write your mobile number. This can't be left blank.";
   var MSG_PHONE_BAD = 'Please enter a valid U.S. or Canada mobile number.';
+  var MSG_PHONE_LEN = 'It must be a 10 digit phone number.';
 
   function setErr(fieldId, msg) {
     var f = $(fieldId), p = f.querySelector('.ferr');
@@ -143,12 +141,10 @@ footer p { font-family:'Fredoka',sans-serif; font-weight:600; font-size:14px; co
   }
   function clean(s) { return String(s == null ? '' : s).replace(/["\\<>]/g, '').replace(/[\r\n\t]+/g, ' ').replace(/\s{2,}/g, ' ').trim(); }
 
-  // U.S./Canada mobile numbers only (+1). Returns the number as +1XXXXXXXXXX, or an error message.
   function checkPhone() {
     var digits = ($('phone').value || '').replace(/[^0-9]/g, '');
     if (!digits) return { ok: false, msg: MSG_PHONE_BLANK };
-    if (digits.length === 11 && digits.charAt(0) === '1') digits = digits.slice(1);
-    if (digits.length !== 10) return { ok: false, msg: MSG_PHONE_BAD };
+    if (digits.length !== 10) return { ok: false, msg: MSG_PHONE_LEN };
     var L = window.libphonenumber, parsed = null;
     if (L) {
       try { parsed = L.parsePhoneNumberFromString('+1' + digits); } catch (e) { parsed = null; }
@@ -160,7 +156,38 @@ footer p { font-family:'Fredoka',sans-serif; font-weight:600; font-size:14px; co
   }
 
   $('name').addEventListener('input', function () { setErr('f-name', ''); $('sendErr').classList.remove('on'); });
-  $('phone').addEventListener('input', function () { this.value = this.value.replace(/[^0-9]/g, ''); setErr('f-phone', ''); $('sendErr').classList.remove('on'); });
+  function phoneDigits(text) {
+    var d = String(text || '').replace(/[^0-9]/g, '');
+    if (d.length === 11 && d.charAt(0) === '1') d = d.slice(1);
+    return d.slice(0, 10);
+  }
+  $('phone').addEventListener('keydown', function (e) {
+    if (e.ctrlKey || e.metaKey || e.altKey || e.key.length !== 1) return;
+    if (!/[0-9]/.test(e.key)) { e.preventDefault(); return; }
+    var start = this.selectionStart, end = this.selectionEnd;
+    if (this.value.length >= 10 && start === end) e.preventDefault();
+  });
+  function insertPhoneText(el, text) {
+    var v = el.value, a = el.selectionStart, b = el.selectionEnd;
+    el.value = phoneDigits(v.slice(0, a) + text + v.slice(b));
+    el.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+  $('phone').addEventListener('beforeinput', function (e) {
+    if (e.inputType === 'insertText' && e.data && /[^0-9]/.test(e.data)) {
+      e.preventDefault();
+      if (/[0-9]/.test(e.data)) insertPhoneText(this, e.data);
+    }
+  });
+  $('phone').addEventListener('paste', function (e) {
+    var cb = e.clipboardData || window.clipboardData;
+    e.preventDefault();
+    insertPhoneText(this, cb ? cb.getData('text') : '');
+  });
+  $('phone').addEventListener('input', function () {
+    var cleaned = phoneDigits(this.value);
+    if (this.value !== cleaned) this.value = cleaned;
+    setErr('f-phone', ''); $('sendErr').classList.remove('on');
+  });
   $('name').addEventListener('blur', function () { if (!clean($('name').value)) setErr('f-name', MSG_NAME_BLANK); });
   $('phone').addEventListener('blur', function () { if (!$('phone').value) return; var pr = checkPhone(); if (!pr.ok) setErr('f-phone', pr.msg); });
 
@@ -177,7 +204,6 @@ footer p { font-family:'Fredoka',sans-serif; font-weight:600; font-size:14px; co
       if (firstBad) firstBad.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
-    // Looks like a bot? Still saved, but flagged: flagged numbers get no texts until staff clear them in Class Manager.
     var suspect = $('hpField').value ? 'trap' : ((Date.now() - PAGE_LOAD_MS) < 800 ? 'fast' : '');
 
     sending = true;
